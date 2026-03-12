@@ -8,7 +8,8 @@ namespace AiService.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    // [Authorize]
+    [AllowAnonymous] // Remove this line when authentication is implemented. This is for testing purposes only.
     public class AiController : ControllerBase
     {
         private readonly IAiEvaluationService _aiEvaluationService;
