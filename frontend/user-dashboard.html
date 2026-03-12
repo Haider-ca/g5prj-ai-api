@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard | Haven</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/styles.css">
+</head>
+<body data-page="user-dashboard">
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="./index.html">Haven</a>
+      <nav class="topbar-nav">
+        <span id="currentUserLabel" class="nav-pill">Loading session...</span>
+        <button id="logoutButton" class="button button-ghost" type="button">Logout</button>
+      </nav>
+    </header>
+
+    <main class="dashboard-layout">
+      <section class="card card-accent dashboard-summary">
+        <p class="eyebrow">User Dashboard</p>
+        <h1>Answer evaluator</h1>
+        <p class="lead">Submit a question and a student answer, then inspect the AI feedback safely.</p>
+
+        <dl class="metrics-grid">
+          <div class="metric-card">
+            <dt>Role</dt>
+            <dd id="roleValue">User</dd>
+          </div>
+          <div class="metric-card">
+            <dt>Remaining calls</dt>
+            <dd id="remainingCallsValue">--</dd>
+          </div>
+          <div class="metric-card">
+            <dt>Endpoint</dt>
+            <dd>`POST /api/ai/evaluate`</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="card card-panel evaluator-panel">
+        <form id="evaluateForm" class="form-stack" novalidate>
+          <label class="field">
+            <span>Question</span>
+            <textarea id="question" name="question" rows="4" required>What is REST API?</textarea>
+          </label>
+          <label class="field">
+            <span>Student answer</span>
+            <textarea id="studentAnswer" name="studentAnswer" rows="6" required>REST API allows systems to communicate using HTTP methods.</textarea>
+          </label>
+          <button class="button" type="submit">Evaluate answer</button>
+        </form>
+        <p id="evaluateMessage" class="feedback-message" aria-live="polite"></p>
+      </section>
+
+      <section class="card card-panel output-panel">
+        <div class="section-heading">
+          <h2>AI response</h2>
+          <button id="loadUsageButton" class="button button-secondary" type="button">Refresh usage</button>
+        </div>
+        <dl class="result-grid">
+          <div>
+            <dt>Score</dt>
+            <dd id="scoreValue">--</dd>
+          </div>
+          <div>
+            <dt>Feedback</dt>
+            <dd id="feedbackValue">No evaluation yet.</dd>
+          </div>
+          <div>
+            <dt>Model</dt>
+            <dd id="modelValue">--</dd>
+          </div>
+          <div>
+            <dt>Remaining calls</dt>
+            <dd id="responseRemainingCallsValue">--</dd>
+          </div>
+        </dl>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="./assets/js/pages/user-dashboard-page.js"></script>
+</body>
+</html>
