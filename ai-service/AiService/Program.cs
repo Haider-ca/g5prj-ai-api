@@ -1,3 +1,7 @@
+// Author: Haider Al-Sudani
+// Course: COMP 4537
+// Note: ChatGPT was used as a learning tool.
+
 using AiService.Clients;
 using AiService.Interfaces.Clients;
 using AiService.Interfaces.Services;
