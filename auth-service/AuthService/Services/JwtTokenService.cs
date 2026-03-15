@@ -26,7 +26,12 @@ public sealed class JwtTokenService : IJwtTokenService
 
     public string CreateToken(UserRecord user)
     {
-        var keyText = _textFileProvider.ReadText(_jwtOptions.KeyFilePath);
+        var keyText = Environment.GetEnvironmentVariable("JWT_KEY");
+        if (string.IsNullOrWhiteSpace(keyText))
+        {
+            keyText = _textFileProvider.ReadText(_jwtOptions.KeyFilePath);
+        }
+
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyText));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
