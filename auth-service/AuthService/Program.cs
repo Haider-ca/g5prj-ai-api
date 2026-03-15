@@ -32,7 +32,12 @@ if (string.IsNullOrWhiteSpace(jwtOptions.KeyFilePath))
 }
 
 var jwtKeyProvider = new TextFileProvider(builder.Environment.ContentRootPath);
-var jwtKey = jwtKeyProvider.ReadText(jwtOptions.KeyFilePath).Trim();
+var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
+
+if (string.IsNullOrWhiteSpace(jwtKey))
+{
+    jwtKey = jwtKeyProvider.ReadText(jwtOptions.KeyFilePath).Trim();
+}
 
 if (string.IsNullOrWhiteSpace(jwtKey))
 {
