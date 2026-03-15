@@ -1,0 +1,29 @@
+[
+  {
+    "Id": "00924b34-7f8b-4288-9981-1893b8412d6b",
+    "Email": "test@test.com",
+    "PasswordHash": "BlX9Y\u002BODZKoS4b2ZrFr15w==:1nucNKq/xR1Ei3zc\u002Buui\u002BE\u002BqbL8yhzZ/I1Gx8ci40MY=",
+    "Role": "user",
+    "RemainingCalls": 20,
+    "UsageCount": 0,
+    "CreatedAtUtc": "2026-03-15T05:21:29.1926711Z"
+  },
+  {
+    "Id": "d40d4d89-cffd-433b-b9b8-cf0c84758cdf",
+    "Email": "john@john.com",
+    "PasswordHash": "8mIkEtUBDG1o5nTgeaeDIQ==:1L3EzMts2qToyfsBPmIMrLrDKjBQUywG/n32hZEkLfA=",
+    "Role": "user",
+    "RemainingCalls": 20,
+    "UsageCount": 0,
+    "CreatedAtUtc": "2026-03-15T05:40:00Z"
+  },
+  {
+    "Id": "28d7b502-9725-4dad-abf8-aaad8300b91f",
+    "Email": "admin@admin.com",
+    "PasswordHash": "nElzHmEuhb+PH4fAXej64A==:jULOoUeQwXgVltEbr3qHTeU+xnszQT8dAmECjDJBCFY=",
+    "Role": "admin",
+    "RemainingCalls": 20,
+    "UsageCount": 0,
+    "CreatedAtUtc": "2026-03-15T05:40:00Z"
+  }
+]

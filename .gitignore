@@ -19,6 +19,11 @@ obj/
 logs/
 *.log
 
+# Node
+package.json
+package-lock.json
+node_modules/
+
 # OS files
 .DS_Store
 Thumbs.db
