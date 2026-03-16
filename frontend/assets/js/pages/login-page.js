@@ -17,14 +17,26 @@ loginForm.addEventListener("submit", async (event) => {
   setMessage(formMessage, "");
 
   try {
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    // Basic frontend validation to match backend expectations
+    const isEmailValid = email && email.includes("@");
+    const isPasswordValid = Boolean(password);
+
+    if (!isEmailValid || !isPasswordValid) {
+      setMessage(formMessage, UiStrings.loginValidationError, "error");
+      return;
+    }
+
     const payload = await authApi.login({
-      email: emailInput.value.trim(),
-      password: passwordInput.value
+      email,
+      password
     });
 
     const session = authApi.normalizeLoginResult(payload, emailInput.value.trim());
     if (!session.token) {
-      throw new Error("Login succeeded but no JWT token was returned.");
+      throw new Error(UiStrings.loginMissingToken);
     }
 
     sessionController.saveSession(session);

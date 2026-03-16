@@ -10,5 +10,16 @@ export const UiStrings = Object.freeze({
   usageLoaded: "Usage information refreshed.",
   evaluationSuccess: "Evaluation completed successfully.",
   usersLoaded: "User records refreshed.",
-  logoutSuccess: "You have been logged out."
+  logoutSuccess: "You have been logged out.",
+  loginValidationError: "Please enter a valid email and password.",
+  registerValidationError: "Please provide a valid email, password (min 3 characters), and role.",
+  signedInUserLabel: "Signed in user",
+  signedInAdminLabel: "Signed in admin",
+  adminNoUsers: "No users returned by the auth service.",
+  landingAdminDestination: "Admin dashboard",
+  landingUserDestination: "User dashboard",
+  landingLoginDestination: "Login page",
+  landingOpenDashboard: "Open dashboard",
+  landingOpenLogin: "Open login",
+  loginMissingToken: "Login succeeded but no JWT token was returned."
 });

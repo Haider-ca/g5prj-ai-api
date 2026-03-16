@@ -15,10 +15,24 @@ registerForm.addEventListener("submit", async (event) => {
   setMessage(formMessage, "");
 
   try {
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    const role = roleInput.value;
+
+    // Mirror backend validation rules for better UX
+    const isEmailValid = email && email.includes("@");
+    const isPasswordValid = password && password.length >= 3;
+    const isRoleValid = role === "user" || role === "admin";
+
+    if (!isEmailValid || !isPasswordValid || !isRoleValid) {
+      setMessage(formMessage, UiStrings.registerValidationError, "error");
+      return;
+    }
+
     await authApi.register({
-      email: emailInput.value.trim(),
-      password: passwordInput.value,
-      role: roleInput.value
+      email,
+      password,
+      role
     });
 
     registerForm.reset();

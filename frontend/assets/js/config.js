@@ -18,7 +18,7 @@ export const AppConfig = Object.freeze({
     admin: "admin"
   }),
   devSession: Object.freeze({
-    enabled: true,
+    enabled: false,
     testUserEmail: "student@example.com",
     testAdminEmail: "admin@example.com",
     placeholderToken: "frontend-dev-session"
