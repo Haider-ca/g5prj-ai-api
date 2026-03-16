@@ -1,5 +1,5 @@
 export const AppConfig = Object.freeze({
-  authServiceBaseUrl: "http://localhost:5080",
+  authServiceBaseUrl: "https://g5prj-ai-api.onrender.com",
   aiServiceBaseUrl: "https://g5prj-ai-api-production.up.railway.app",
   endpoints: Object.freeze({
     register: "/register",
