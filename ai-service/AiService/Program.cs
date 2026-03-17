@@ -71,9 +71,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
     {
-        if (!string.IsNullOrWhiteSpace(corsOptions.AllowedOrigin))
+        if (corsOptions.AllowedOrigins != null && corsOptions.AllowedOrigins.Count > 0)
         {
-            policy.WithOrigins(corsOptions.AllowedOrigin)
+            policy.WithOrigins(corsOptions.AllowedOrigins.ToArray())
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         }
