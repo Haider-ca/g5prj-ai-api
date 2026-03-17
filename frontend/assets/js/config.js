@@ -10,15 +10,15 @@ export const AppConfig = Object.freeze({
     evaluate: "/api/ai/evaluate"
   }),
   storageKeys: Object.freeze({
-    token: "haven.jwt",
-    user: "haven.user"
+    token: "user.token",
+    user: "user.info"
   }),
   roles: Object.freeze({
     user: "user",
     admin: "admin"
   }),
   devSession: Object.freeze({
-    enabled: true,
+    enabled: false,
     testUserEmail: "student@example.com",
     testAdminEmail: "admin@example.com",
     placeholderToken: "frontend-dev-session"

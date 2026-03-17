@@ -25,7 +25,7 @@ if (session) {
   const loadUsageButton = byId("loadUsageButton");
   const logoutButton = byId("logoutButton");
 
-  setText(currentUserLabel, session.user.email || "Signed in user");
+  setText(currentUserLabel, session.user.email || UiStrings.signedInUserLabel);
   setText(roleValue, session.user.role);
 
   logoutButton.addEventListener("click", () => {

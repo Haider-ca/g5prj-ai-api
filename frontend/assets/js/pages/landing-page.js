@@ -16,15 +16,18 @@ const session = sessionController.getSession();
 
 if (session.token && session.user) {
   setText(sessionState, UiStrings.sessionRestored);
-  setText(sessionTarget, session.user.role === AppConfig.roles.admin ? "Admin dashboard" : "User dashboard");
-  sessionAction.textContent = "Open dashboard";
+  const destination = session.user.role === AppConfig.roles.admin
+    ? UiStrings.landingAdminDestination
+    : UiStrings.landingUserDestination;
+  setText(sessionTarget, destination);
+  sessionAction.textContent = UiStrings.landingOpenDashboard;
   sessionAction.href = session.user.role === AppConfig.roles.admin
     ? AppConfig.pages.adminDashboard
     : AppConfig.pages.userDashboard;
 } else {
   setText(sessionState, UiStrings.sessionMissing);
-  setText(sessionTarget, "Login page");
-  sessionAction.textContent = "Open login";
+  setText(sessionTarget, UiStrings.landingLoginDestination);
+  sessionAction.textContent = UiStrings.landingOpenLogin;
   sessionAction.href = AppConfig.pages.login;
 }
 

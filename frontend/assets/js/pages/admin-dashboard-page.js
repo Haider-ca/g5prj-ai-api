@@ -16,7 +16,7 @@ if (session) {
   const refreshUsersButton = byId("refreshUsersButton");
   const logoutButton = byId("logoutButton");
 
-  setText(currentAdminLabel, session.user.email || "Signed in admin");
+  setText(currentAdminLabel, session.user.email || UiStrings.signedInAdminLabel);
 
   logoutButton.addEventListener("click", () => {
     sessionController.clearSession();
@@ -48,7 +48,7 @@ if (session) {
       const emptyRow = document.createElement("tr");
       const emptyCell = document.createElement("td");
       emptyCell.colSpan = 4;
-      emptyCell.textContent = "No users returned by the auth service.";
+      emptyCell.textContent = UiStrings.adminNoUsers;
       emptyRow.appendChild(emptyCell);
       usersTableBody.appendChild(emptyRow);
       return;
