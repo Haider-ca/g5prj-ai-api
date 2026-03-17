@@ -10,8 +10,8 @@ export const AppConfig = Object.freeze({
     evaluate: "/api/ai/evaluate"
   }),
   storageKeys: Object.freeze({
-    token: "haven.jwt",
-    user: "haven.user"
+    token: "user.token",
+    user: "user.info"
   }),
   roles: Object.freeze({
     user: "user",

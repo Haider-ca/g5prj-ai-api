@@ -1,76 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Haven | Answer Evaluator</title>
+
+  <title>Answerly | AI Classroom Feedback</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
   <link rel="stylesheet" href="./assets/css/styles.css">
 </head>
+
+
 <body data-page="landing">
+
   <div class="page-shell">
+
+
     <header class="topbar">
-      <a class="brand" href="./index.html">Haven</a>
+      <a class="brand" href="./index.html">Answerly</a>
+
       <nav class="topbar-nav">
         <a class="nav-link" href="./login.html">Login</a>
         <a class="button button-ghost" href="./register.html">Create account</a>
       </nav>
     </header>
 
+
+
+    <!-- HERO SECTION -->
+
     <main class="hero-layout">
+
+
       <section class="hero-copy card card-accent">
-        <p class="eyebrow">AI-Powered Educational Tool</p>
-        <h1>Evaluate short answers with a client built for two backend services.</h1>
+
+        <p class="eyebrow">AI-POWERED CLASSROOM FEEDBACK</p>
+
+        <h1>Turn student answers into instant AI feedback.</h1>
+
         <p class="lead">
-          Haven connects your auth service and AI service through a clean frontend flow:
-          register, sign in, submit a question and answer, then inspect score, feedback,
-          model, and remaining API calls.
+          Answerly helps instructors collect short responses from students,
+          evaluate them with AI, and track participation in real time.
         </p>
 
         <div class="cta-row">
-          <a class="button" href="./register.html">Start with registration</a>
-          <a class="button button-secondary" href="./login.html">Use existing account</a>
+          <a class="button" href="./register.html">Create account</a>
+          <a class="button button-secondary" href="./login.html">Log in</a>
         </div>
 
-        <dl class="hero-grid">
-          <div>
-            <dt>Auth flow</dt>
-            <dd>Email, password, JWT storage, role-based redirects.</dd>
-          </div>
-          <div>
-            <dt>AI flow</dt>
-            <dd>Secure `POST /api/ai/evaluate` calls with bearer token.</dd>
-          </div>
-          <div>
-            <dt>Safety</dt>
-            <dd>Content rendering uses `textContent` to reduce XSS risk.</dd>
-          </div>
-          <div>
-            <dt>Maintainability</dt>
-            <dd>Page scripts, service classes, and strings are separated.</dd>
-          </div>
-        </dl>
       </section>
 
+
+
+      <!-- RIGHT SIDE CARD -->
+
       <aside class="card card-panel status-panel">
-        <div class="status-block">
-          <p class="panel-label">Current session</p>
-          <p id="sessionState" class="panel-value">Checking local session...</p>
-        </div>
-        <div class="status-block">
-          <p class="panel-label">Role destination</p>
-          <p id="sessionTarget" class="panel-value">Not signed in</p>
-        </div>
-        <div class="status-block">
+
+        <p class="eyebrow">HOW IT WORKS</p>
+
+        <h2 class="panel-title">From question to AI feedback</h2>
+
+        <ol class="steps-list">
+
+          <li>
+            <div class="step-badge">1</div>
+            <div class="step-body">
+              <span class="step-label">Ask a question</span>
+              <span class="step-copy">Create a short-answer question for your class.</span>
+            </div>
+          </li>
+
+          <li>
+            <div class="step-badge">2</div>
+            <div class="step-body">
+              <span class="step-label">Students respond</span>
+              <span class="step-copy">Students submit answers from their devices.</span>
+            </div>
+          </li>
+
+          <li>
+            <div class="step-badge">3</div>
+            <div class="step-body">
+              <span class="step-label">AI evaluates</span>
+              <span class="step-copy">AI analyzes responses and provides instant feedback.</span>
+            </div>
+          </li>
+
+        </ol>
+
+
+        <!-- <div class="status-block">
           <p class="panel-label">Quick action</p>
-          <a id="sessionAction" class="button button-secondary button-full" href="./login.html">Open login</a>
-        </div>
+          <a id="sessionAction" class="button button-secondary button-full" href="./login.html">
+            Get started
+          </a>
+        </div> -->
+
       </aside>
+
     </main>
+
+
+
+    <!-- FEATURE CARDS -->
+
+    <!-- <section class="hero-grid">
+
+      <div class="card card-panel feature-card">
+        <dt>For instructors</dt>
+        <dd>
+          Create questions, invite students, and monitor classroom engagement
+          from a simple dashboard.
+        </dd>
+      </div>
+
+      <div class="card card-panel feature-card">
+        <dt>For students</dt>
+        <dd>
+          Submit short answers and receive instant AI-powered feedback and scores.
+        </dd>
+      </div>
+
+      <div class="card card-panel feature-card">
+        <dt>Secure by default</dt>
+        <dd>
+          User data and passwords are protected with modern security practices.
+        </dd>
+      </div>
+
+      <div class="card card-panel feature-card">
+        <dt>Built to scale</dt>
+        <dd>
+          Designed with a modular architecture that allows the platform
+          to grow with your classroom.
+        </dd>
+      </div>
+
+    </section> -->
+
+
+
   </div>
 
   <script type="module" src="./assets/js/pages/landing-page.js"></script>
+
 </body>
+
 </html>
