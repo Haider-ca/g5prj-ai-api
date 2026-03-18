@@ -28,13 +28,16 @@ namespace AiService.Clients
             request.Headers.Authorization = BuildAuthHeader(bearerToken);
 
             var response = await _httpClient.SendAsync(request);
+
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning("Usage check failed with status code {StatusCode}", response.StatusCode);
-                return (false, 0, "Unable to verify API usage.");
+                var errorBody = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("Usage check failed with status code {StatusCode}. Body: {Body}", response.StatusCode, errorBody);
+                return (false, 0, $"Unable to verify API usage. Auth service returned {(int)response.StatusCode}: {errorBody}");
             }
 
             var result = await response.Content.ReadFromJsonAsync<UsageCheckResponse>();
+
             if (result == null)
             {
                 return (false, 0, "Invalid usage response.");
@@ -49,13 +52,16 @@ namespace AiService.Clients
             request.Headers.Authorization = BuildAuthHeader(bearerToken);
 
             var response = await _httpClient.SendAsync(request);
+
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning("Usage decrement failed with status code {StatusCode}", response.StatusCode);
-                return (false, 0, "Unable to update API usage.");
+                var errorBody = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("Usage decrement failed with status code {StatusCode}. Body: {Body}", response.StatusCode, errorBody);
+                return (false, 0, $"Unable to update API usage. Auth service returned {(int)response.StatusCode}: {errorBody}");
             }
 
             var result = await response.Content.ReadFromJsonAsync<UsageCheckResponse>();
+
             if (result == null)
             {
                 return (false, 0, "Invalid usage update response.");
