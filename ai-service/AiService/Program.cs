@@ -42,7 +42,7 @@ if (string.IsNullOrWhiteSpace(jwtOptions.Key))
     throw new InvalidOperationException("JWT key is missing.");
 }
 
-var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key));
+var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key + "\n"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
