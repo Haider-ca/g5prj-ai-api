@@ -1,8 +1,10 @@
+using AuthService.Data;
 using AuthService.Middleware;
 using AuthService.Options;
 using AuthService.Repositories;
 using AuthService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -16,12 +18,30 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptio
 builder.Services.Configure<CorsOptions>(builder.Configuration.GetSection(CorsOptions.SectionName));
 builder.Services.Configure<FileStorageOptions>(builder.Configuration.GetSection(FileStorageOptions.SectionName));
 
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (!string.IsNullOrWhiteSpace(connectionString))
+{
+    if (connectionString.StartsWith("postgresql://") || connectionString.StartsWith("postgres://"))
+    {
+        connectionString = ConvertPostgresUrl(connectionString);
+    }
+
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql(connectionString));
+    builder.Services.AddScoped<IUserRepository, PostgresUserRepository>();
+}
+else
+{
+    builder.Services.AddSingleton<IUserRepository, FileUserRepository>();
+}
+
 builder.Services.AddSingleton<ITextFileProvider>(_ => new TextFileProvider(builder.Environment.ContentRootPath));
 builder.Services.AddSingleton<IMessageProvider, MessageProvider>();
 builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
 builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
-builder.Services.AddSingleton<IUserRepository, FileUserRepository>();
-builder.Services.AddSingleton<IAuthService, AuthService.Services.AuthService>();
+builder.Services.AddScoped<IAuthService, AuthService.Services.AuthService>();
 
 var jwtSection = builder.Configuration.GetSection(JwtOptions.SectionName);
 var jwtOptions = jwtSection.Get<JwtOptions>() ?? new JwtOptions();
@@ -94,4 +114,23 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+if (!string.IsNullOrWhiteSpace(connectionString))
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();
+}
+
 app.Run();
+
+static string ConvertPostgresUrl(string url)
+{
+    var uri = new Uri(url);
+    var userInfo = uri.UserInfo.Split(':');
+    var host = uri.Host;
+    var port = uri.Port > 0 ? uri.Port : 5432;
+    var database = uri.AbsolutePath.TrimStart('/');
+    var username = userInfo[0];
+    var password = userInfo.Length > 1 ? userInfo[1] : "";
+    return $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+}
