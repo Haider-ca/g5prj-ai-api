@@ -1,0 +1,33 @@
+# Environment files
+.env
+.env.*
+
+# ASP.NET secrets
+appsettings.Development.json
+appsettings.Local.json
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build folders
+bin/
+obj/
+
+# Logs
+logs/
+*.log
+
+# Node
+package.json
+package-lock.json
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+Ignore File/
+
+.idea/
