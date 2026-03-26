@@ -31,8 +31,7 @@ if (session) {
     setMessage(adminMessage, "");
 
     try {
-      const payload = await authApi.getAdminUsers(session.token);
-      const users = authApi.normalizeAdminUsers(payload);
+      const users = await authApi.getAdminUsers(session.token);
       renderUsers(users);
       setText(userCountValue, String(users.length));
       setMessage(adminMessage, UiStrings.usersLoaded, "success");

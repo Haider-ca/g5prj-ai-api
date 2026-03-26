@@ -62,8 +62,7 @@ if (session) {
   async function loadUsage() {
     try {
       const payload = await authApi.getUsage(session.token);
-      const usage = authApi.normalizeUsage(payload);
-      setText(remainingCallsValue, String(usage.remainingCalls));
+      setText(remainingCallsValue, String(payload.remainingCalls));
       setMessage(evaluateMessage, UiStrings.usageLoaded, "success");
     } catch (error) {
       setMessage(evaluateMessage, error.message || UiStrings.genericError, "error");
