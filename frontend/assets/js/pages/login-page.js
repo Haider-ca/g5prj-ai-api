@@ -58,22 +58,17 @@ loginForm.addEventListener("submit", async (event) => {
       password
     });
 
-    const session = authApi.normalizeLoginResult(payload, emailInput.value.trim());
-    if (!session.token) {
+    if (!payload.token) {
       throw new Error(UiStrings.loginMissingToken);
     }
 
-    try {
-      const currentUser = await authApi.getCurrentUser();
-      session.user = authApi.normalizeCurrentUser(currentUser);
-    } catch {
-      // Fall back to the login response if the cookie-backed profile check fails.
-    }
-
-    sessionController.saveSession(session);
+    sessionController.saveSession({
+      token: payload.token,
+      user: payload.user
+    });
     setMessage(formMessage, UiStrings.loginSuccess, "success");
     window.setTimeout(() => {
-      sessionController.redirectToRoleHome(session.user.role);
+      sessionController.redirectToRoleHome(payload.user.role);
     }, 500);
   } catch (error) {
     if (error.message === "Invalid email or password.") {

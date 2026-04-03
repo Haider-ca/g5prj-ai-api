@@ -46,46 +46,14 @@ export class AuthApiService {
     });
   }
 
-  normalizeLoginResult(payload, fallbackEmail = "") {
-    return {
-      token: payload.token || payload.jwt || payload.accessToken || "",
-      user: {
-        email:
-          payload.user?.email ||
-          payload.email ||
-          fallbackEmail,
-        role: (payload.user?.role || payload.role || AppConfig.roles.user).toLowerCase()
-      }
-    };
-  }
-
-  normalizeCurrentUser(payload) {
-    return {
-      email: payload.email || payload.user?.email || "",
-      role: (payload.role || payload.user?.role || AppConfig.roles.user).toLowerCase(),
-      remainingCalls:
-        payload.remainingCalls ??
-        payload.user?.remainingCalls ??
-        null
-    };
+  normalizeAdminUsers(payload) {
+    return Array.isArray(payload) ? payload : (payload.users ?? []);
   }
 
   normalizeUsage(payload) {
     return {
-      remainingCalls: payload.remainingCalls ?? payload.callsRemaining ?? 0,
-      usageCount: payload.usageCount ?? payload.totalUsage ?? null
+      remainingCalls: payload.remainingCalls ?? payload.callsRemaining ?? "--"
     };
-  }
-
-  normalizeAdminUsers(payload) {
-    const rows = Array.isArray(payload) ? payload : payload.users || [];
-
-    return rows.map((row) => ({
-      email: row.email || "",
-      role: (row.role || AppConfig.roles.user).toLowerCase(),
-      remainingCalls: row.remainingCalls ?? row.callsRemaining ?? 0,
-      usageCount: row.usageCount ?? row.totalUsage ?? row.callsUsed ?? 0
-    }));
   }
 
   #buildUrl(path) {
