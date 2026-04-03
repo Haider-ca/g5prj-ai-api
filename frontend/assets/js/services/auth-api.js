@@ -22,24 +22,27 @@ export class AuthApiService {
     });
   }
 
-  async getCurrentUser(token) {
+  async logout() {
+    return this.httpClient.request(this.#buildUrl("/logout"), {
+      method: "POST"
+    });
+  }
+
+  async getCurrentUser() {
     return this.httpClient.request(this.#buildUrl(AppConfig.endpoints.me), {
-      method: "GET",
-      headers: this.#authHeaders(token)
+      method: "GET"
     });
   }
 
-  async getUsage(token) {
+  async getUsage() {
     return this.httpClient.request(this.#buildUrl(AppConfig.endpoints.usage), {
-      method: "GET",
-      headers: this.#authHeaders(token)
+      method: "GET"
     });
   }
 
-  async getAdminUsers(token) {
+  async getAdminUsers() {
     return this.httpClient.request(this.#buildUrl(AppConfig.endpoints.adminUsers), {
-      method: "GET",
-      headers: this.#authHeaders(token)
+      method: "GET"
     });
   }
 
@@ -92,13 +95,6 @@ export class AuthApiService {
   #jsonHeaders() {
     return {
       "Content-Type": "application/json"
-    };
-  }
-
-  #authHeaders(token) {
-    return {
-      ...this.#jsonHeaders(),
-      Authorization: `Bearer ${token}`
     };
   }
 }

@@ -63,6 +63,13 @@ loginForm.addEventListener("submit", async (event) => {
       throw new Error(UiStrings.loginMissingToken);
     }
 
+    try {
+      const currentUser = await authApi.getCurrentUser();
+      session.user = authApi.normalizeCurrentUser(currentUser);
+    } catch {
+      // Fall back to the login response if the cookie-backed profile check fails.
+    }
+
     sessionController.saveSession(session);
     setMessage(formMessage, UiStrings.loginSuccess, "success");
     window.setTimeout(() => {

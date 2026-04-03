@@ -18,7 +18,12 @@ if (session) {
 
   setText(currentAdminLabel, session.user.email || UiStrings.signedInAdminLabel);
 
-  logoutButton.addEventListener("click", () => {
+  logoutButton.addEventListener("click", async () => {
+    try {
+      await authApi.logout();
+    } catch {
+      // Always clear local state even if logout API is unavailable.
+    }
     sessionController.clearSession();
     window.location.href = AppConfig.pages.login;
   });
@@ -31,7 +36,7 @@ if (session) {
     setMessage(adminMessage, "");
 
     try {
-      const payload = await authApi.getAdminUsers(session.token);
+      const payload = await authApi.getAdminUsers();
       const users = authApi.normalizeAdminUsers(payload);
       renderUsers(users);
       setText(userCountValue, String(users.length));
