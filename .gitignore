@@ -5,6 +5,13 @@
 # ASP.NET secrets
 appsettings.Development.json
 appsettings.Local.json
+**/Properties/launchSettings.json
+
+# Local database / container data
+postgres-data/
+pgdata/
+*.sqlite
+*.db
 
 # Visual Studio
 .vs/
@@ -27,7 +34,4 @@ node_modules/
 # OS files
 .DS_Store
 Thumbs.db
-
-Ignore File/
-
 .idea/
