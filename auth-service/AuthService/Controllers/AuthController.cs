@@ -1,6 +1,8 @@
 using AuthService.DTOs;
+using AuthService.Options;
 using AuthService.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace AuthService.Controllers;
 
@@ -8,11 +10,19 @@ namespace AuthService.Controllers;
 [Route("")]
 public class AuthController : ControllerBase
 {
+    private const string AuthCookieName = "auth_token";
     private readonly IAuthService _authService;
+    private readonly JwtOptions _jwtOptions;
+    private readonly IWebHostEnvironment _environment;
 
-    public AuthController(IAuthService authService)
+    public AuthController(
+        IAuthService authService,
+        IOptions<JwtOptions> jwtOptions,
+        IWebHostEnvironment environment)
     {
         _authService = authService;
+        _jwtOptions = jwtOptions.Value;
+        _environment = environment;
     }
 
     [HttpPost("register")]
@@ -42,6 +52,32 @@ public class AuthController : ControllerBase
             return StatusCode(result.StatusCode, new ErrorResponseDto { Message = result.Message });
         }
 
+        AppendAuthCookie(result.Data!.Token);
         return Ok(result.Data);
+    }
+
+    [HttpPost("logout")]
+    [ProducesResponseType(typeof(MessageResponseDto), StatusCodes.Status200OK)]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Delete(AuthCookieName, BuildCookieOptions());
+        return Ok(new MessageResponseDto { Message = "Logged out successfully." });
+    }
+
+    private void AppendAuthCookie(string token)
+    {
+        Response.Cookies.Append(AuthCookieName, token, BuildCookieOptions());
+    }
+
+    private CookieOptions BuildCookieOptions()
+    {
+        return new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = !_environment.IsDevelopment(),
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(_jwtOptions.ExpiryMinutes),
+            Path = "/"
+        };
     }
 }
