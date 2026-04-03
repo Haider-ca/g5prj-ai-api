@@ -1,7 +1,10 @@
 export class HttpClient {
   async request(url, options = {}) {
     try {
-      const response = await fetch(url, options);
+      const response = await fetch(url, {
+        credentials: "include",
+        ...options
+      });
       const contentType = response.headers.get("content-type");
       const payload = await this.#readPayload(response);
 
