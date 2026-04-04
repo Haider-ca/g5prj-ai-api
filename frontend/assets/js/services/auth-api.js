@@ -46,6 +46,18 @@ export class AuthApiService {
     });
   }
 
+  normalizeCurrentUser(payload) {
+    if (!payload) {
+      return null;
+    }
+
+    return {
+      email: payload.email || payload.user?.email || "",
+      role: (payload.role || payload.user?.role || AppConfig.roles.user).toLowerCase(),
+      remainingCalls: payload.remainingCalls ?? payload.user?.remainingCalls ?? null
+    };
+  }
+
   normalizeAdminUsers(payload) {
     return Array.isArray(payload) ? payload : (payload.users ?? []);
   }

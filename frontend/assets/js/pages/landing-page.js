@@ -14,7 +14,7 @@ const devSessionMessage = byId("devSessionMessage");
 
 const session = sessionController.getSession();
 
-if (session.token && session.user) {
+if (session.user) {
   setText(sessionState, UiStrings.sessionRestored);
   const destination = session.user.role === AppConfig.roles.admin
     ? UiStrings.landingAdminDestination

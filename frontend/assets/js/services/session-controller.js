@@ -13,8 +13,12 @@ export class SessionController {
     };
   }
 
-  saveSession({ token, user }) {
-    this.tokenService.setToken(token);
+  saveSession({ token = "", user }) {
+    if (token) {
+      this.tokenService.setToken(token);
+    } else {
+      this.tokenService.clearToken();
+    }
     this.tokenService.setUser(user);
   }
 
@@ -24,7 +28,7 @@ export class SessionController {
 
   hasSession() {
     const session = this.getSession();
-    return Boolean(session.token && session.user);
+    return Boolean(session.user);
   }
 
   redirectToRoleHome(role) {
@@ -35,7 +39,7 @@ export class SessionController {
 
   requireRole(requiredRole) {
     const session = this.getSession();
-    if (!session.token || !session.user) {
+    if (!session.user) {
       window.location.href = AppConfig.pages.login;
       return null;
     }
