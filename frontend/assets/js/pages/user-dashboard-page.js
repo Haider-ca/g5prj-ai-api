@@ -47,7 +47,7 @@ if (session) {
     setMessage(evaluateMessage, "");
 
     try {
-      const payload = await aiApi.evaluateAnswer(session.token, {
+      const payload = await aiApi.evaluateAnswer({
         question: questionInput.value.trim(),
         studentAnswer: studentAnswerInput.value.trim()
       });

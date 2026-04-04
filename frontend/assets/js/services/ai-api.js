@@ -6,12 +6,11 @@ export class AiApiService {
     this.httpClient = httpClient;
   }
 
-  async evaluateAnswer(token, requestBody) {
+  async evaluateAnswer(requestBody) {
     return this.httpClient.request(`${AppConfig.aiServiceBaseUrl}${AppConfig.endpoints.evaluate}`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(requestBody)
     });

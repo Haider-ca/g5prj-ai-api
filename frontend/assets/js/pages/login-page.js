@@ -58,17 +58,27 @@ loginForm.addEventListener("submit", async (event) => {
       password
     });
 
-    if (!payload.token) {
-      throw new Error(UiStrings.loginMissingToken);
+    let currentUser = payload?.user;
+
+    try {
+      const mePayload = await authApi.getCurrentUser();
+      currentUser = authApi.normalizeCurrentUser(mePayload);
+    } catch {
+      if (currentUser) {
+        currentUser = authApi.normalizeCurrentUser(currentUser);
+      }
+    }
+
+    if (!currentUser) {
+      throw new Error(UiStrings.genericError);
     }
 
     sessionController.saveSession({
-      token: payload.token,
-      user: payload.user
+      user: currentUser
     });
     setMessage(formMessage, UiStrings.loginSuccess, "success");
     window.setTimeout(() => {
-      sessionController.redirectToRoleHome(payload.user.role);
+      sessionController.redirectToRoleHome(currentUser.role);
     }, 500);
   } catch (error) {
     if (error.message === "Invalid email or password.") {
