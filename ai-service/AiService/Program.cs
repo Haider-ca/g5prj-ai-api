@@ -15,6 +15,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.AddConsole();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -42,6 +44,16 @@ if (string.IsNullOrWhiteSpace(jwtOptions.Key))
     throw new InvalidOperationException("JWT key is missing.");
 }
 
+var startupLogger = LoggerFactory.Create(logging => logging.AddConsole())
+    .CreateLogger("Startup");
+startupLogger.LogInformation(
+    "JWT config loaded. Issuer: {Issuer}; Audience: {Audience}; KeyLength: {KeyLength}; KeyPrefix: {KeyPrefix}; KeySuffix: {KeySuffix}",
+    jwtOptions.Issuer,
+    jwtOptions.Audience,
+    jwtOptions.Key.Length,
+    MaskPrefix(jwtOptions.Key),
+    MaskSuffix(jwtOptions.Key));
+
 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -50,6 +62,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.RequireHttpsMetadata = true;
         options.Events = new JwtBearerEvents
         {
+            OnAuthenticationFailed = context =>
+            {
+                var logger = context.HttpContext.RequestServices
+                    .GetRequiredService<ILoggerFactory>()
+                    .CreateLogger("JwtAuth");
+                logger.LogError(
+                    context.Exception,
+                    "JWT authentication failed. Message: {Message}",
+                    context.Exception.Message);
+                return Task.CompletedTask;
+            },
             OnMessageReceived = context =>
             {
                 if (string.IsNullOrWhiteSpace(context.Token) &&
@@ -114,3 +137,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+static string MaskPrefix(string value) => value.Length <= 6 ? value : value[..6];
+
+static string MaskSuffix(string value) => value.Length <= 6 ? value : value[^6..];
