@@ -10,6 +10,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.AddConsole();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -63,6 +65,16 @@ if (string.IsNullOrWhiteSpace(jwtKey))
 {
     throw new InvalidOperationException("JWT signing key file is empty.");
 }
+
+var startupLogger = LoggerFactory.Create(logging => logging.AddConsole())
+    .CreateLogger("Startup");
+startupLogger.LogInformation(
+    "AUTH JWT config loaded. Issuer: {Issuer}; Audience: {Audience}; KeyLength: {KeyLength}; KeyPrefix: {KeyPrefix}; KeySuffix: {KeySuffix}",
+    jwtOptions.Issuer,
+    jwtOptions.Audience,
+    jwtKey.Length,
+    MaskPrefix(jwtKey),
+    MaskSuffix(jwtKey));
 
 var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 
@@ -136,6 +148,10 @@ if (!string.IsNullOrWhiteSpace(connectionString))
 }
 
 app.Run();
+
+static string MaskPrefix(string value) => value.Length <= 6 ? value : value[..6];
+
+static string MaskSuffix(string value) => value.Length <= 6 ? value : value[^6..];
 
 static string ConvertPostgresUrl(string url)
 {
