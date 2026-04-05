@@ -1,6 +1,14 @@
+const isLocalFrontend =
+  typeof window !== "undefined" &&
+  ["localhost", "127.0.0.1"].includes(window.location.hostname);
+
 export const AppConfig = Object.freeze({
-  authServiceBaseUrl: "https://g5prj-ai-api.onrender.com",
-  aiServiceBaseUrl: "https://g5prj-ai-api-production.up.railway.app",
+  authServiceBaseUrl: isLocalFrontend
+    ? "http://localhost:5080"
+    : "https://g5prj-ai-api.onrender.com",
+  aiServiceBaseUrl: isLocalFrontend
+    ? "http://localhost:5139"
+    : "https://g5prj-ai-api-production.up.railway.app",
   endpoints: Object.freeze({
     register: "/register",
     login: "/login",

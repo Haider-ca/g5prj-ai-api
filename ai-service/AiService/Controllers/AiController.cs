@@ -25,8 +25,14 @@ namespace AiService.Controllers
         [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> Evaluate([FromBody] EvaluateRequestDto request)
         {
-            var bearerToken = Request.Headers.Authorization.ToString();
-            var result = await _aiEvaluationService.EvaluateAsync(request, bearerToken, User);
+            var accessToken = Request.Headers.Authorization.ToString();
+            if (string.IsNullOrWhiteSpace(accessToken) &&
+                Request.Cookies.TryGetValue("auth_token", out var cookieToken))
+            {
+                accessToken = cookieToken;
+            }
+
+            var result = await _aiEvaluationService.EvaluateAsync(request, accessToken, User);
 
             if (!result.Success)
             {

@@ -32,6 +32,8 @@ public sealed class JwtTokenService : IJwtTokenService
             keyText = _textFileProvider.ReadText(_jwtOptions.KeyFilePath);
         }
 
+        keyText = keyText.Trim();
+
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyText));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 

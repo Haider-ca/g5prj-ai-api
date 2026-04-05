@@ -10,6 +10,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.AddConsole();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -58,11 +60,25 @@ if (string.IsNullOrWhiteSpace(jwtKey))
 {
     jwtKey = jwtKeyProvider.ReadText(jwtOptions.KeyFilePath).Trim();
 }
+else
+{
+    jwtKey = jwtKey.Trim();
+}
 
 if (string.IsNullOrWhiteSpace(jwtKey))
 {
     throw new InvalidOperationException("JWT signing key file is empty.");
 }
+
+var startupLogger = LoggerFactory.Create(logging => logging.AddConsole())
+    .CreateLogger("Startup");
+startupLogger.LogInformation(
+    "AUTH JWT config loaded. Issuer: {Issuer}; Audience: {Audience}; KeyLength: {KeyLength}; KeyPrefix: {KeyPrefix}; KeySuffix: {KeySuffix}",
+    jwtOptions.Issuer,
+    jwtOptions.Audience,
+    jwtKey.Length,
+    MaskPrefix(jwtKey),
+    MaskSuffix(jwtKey));
 
 var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 
@@ -70,6 +86,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.RequireHttpsMetadata = false;
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                if (string.IsNullOrWhiteSpace(context.Token) &&
+                    context.Request.Cookies.TryGetValue("auth_token", out var cookieToken))
+                {
+                    context.Token = cookieToken;
+                }
+
+                return Task.CompletedTask;
+            }
+        };
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
@@ -94,7 +123,8 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins(corsOptions.AllowedOrigins.ToArray())
                 .AllowAnyHeader()
-                .AllowAnyMethod();
+                .AllowAnyMethod()
+                .AllowCredentials();
         }
     });
 });
@@ -122,6 +152,10 @@ if (!string.IsNullOrWhiteSpace(connectionString))
 }
 
 app.Run();
+
+static string MaskPrefix(string value) => value.Length <= 6 ? value : value[..6];
+
+static string MaskSuffix(string value) => value.Length <= 6 ? value : value[^6..];
 
 static string ConvertPostgresUrl(string url)
 {

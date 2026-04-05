@@ -28,7 +28,12 @@ if (session) {
   setText(currentUserLabel, session.user.email || UiStrings.signedInUserLabel);
   setText(roleValue, session.user.role);
 
-  logoutButton.addEventListener("click", () => {
+  logoutButton.addEventListener("click", async () => {
+    try {
+      await authApi.logout();
+    } catch {
+      // Always clear local state even if logout API is unavailable.
+    }
     sessionController.clearSession();
     window.location.href = AppConfig.pages.login;
   });
@@ -42,7 +47,7 @@ if (session) {
     setMessage(evaluateMessage, "");
 
     try {
-      const payload = await aiApi.evaluateAnswer(session.token, {
+      const payload = await aiApi.evaluateAnswer({
         question: questionInput.value.trim(),
         studentAnswer: studentAnswerInput.value.trim()
       });
@@ -61,7 +66,7 @@ if (session) {
 
   async function loadUsage() {
     try {
-      const payload = await authApi.getUsage(session.token);
+      const payload = await authApi.getUsage();
       const usage = authApi.normalizeUsage(payload);
       setText(remainingCallsValue, String(usage.remainingCalls));
       setMessage(evaluateMessage, UiStrings.usageLoaded, "success");

@@ -4,7 +4,7 @@ Static frontend for the `g5prj` Milestone 1 client application.
 
 ## Current service configuration
 
-- `AI service`: `https://g5prj-ai-api-production.up.railway.app`
+- `AI service`: `http://localhost:5139`
 - `Auth service`: `http://localhost:5080`
 
 Update service URLs in `assets/js/config.js` when backend endpoints change.
@@ -33,20 +33,34 @@ Serve the `frontend/` folder on port `3000`.
 
 ## Current testable flow
 
-- Landing page loads session state from local storage.
-- Landing page includes temporary development buttons for creating a local user or admin session.
-- User dashboard can call `POST /api/ai/evaluate` against the deployed AI service.
-- Admin and auth flows still depend on the auth service being implemented and reachable.
+- Register and login use the local auth service.
+- Login succeeds through an `HttpOnly` auth cookie set by the auth service.
+- Frontend requests include credentials so the browser sends the auth cookie automatically.
+- The current signed-in user is restored through `GET /users/me`.
+- User dashboard can call `POST /api/ai/evaluate` against the local AI service.
+- Admin dashboard loads users from the local auth service.
 
-## Temporary development access
+## Authentication Notes
 
-Until the auth service is available, use the landing page buttons:
+- The frontend does not need to read JWT directly from cookies.
+- The auth cookie is `HttpOnly`, so browser JavaScript should not access it.
+- Session state in local storage is limited to user profile data used for routing and UI.
 
-- `Open user dashboard`
-- `Open admin dashboard`
+## Local Services
 
-These buttons create a local session in browser storage so dashboard pages can be tested.
-Remove this shortcut after the real auth flow is connected.
+Start the auth service:
+
+```bash
+cd auth-service/AuthService
+ASPNETCORE_URLS=http://localhost:5080 dotnet run
+```
+
+Start the AI service:
+
+```bash
+cd ai-service/AiService
+ASPNETCORE_URLS=http://localhost:5139 dotnet run
+```
 
 ## AI request example
 

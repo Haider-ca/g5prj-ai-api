@@ -22,67 +22,50 @@ export class AuthApiService {
     });
   }
 
-  async getCurrentUser(token) {
+  async logout() {
+    return this.httpClient.request(this.#buildUrl("/logout"), {
+      method: "POST"
+    });
+  }
+
+  async getCurrentUser() {
     return this.httpClient.request(this.#buildUrl(AppConfig.endpoints.me), {
-      method: "GET",
-      headers: this.#authHeaders(token)
+      method: "GET"
     });
   }
 
-  async getUsage(token) {
+  async getUsage() {
     return this.httpClient.request(this.#buildUrl(AppConfig.endpoints.usage), {
-      method: "GET",
-      headers: this.#authHeaders(token)
+      method: "GET"
     });
   }
 
-  async getAdminUsers(token) {
+  async getAdminUsers() {
     return this.httpClient.request(this.#buildUrl(AppConfig.endpoints.adminUsers), {
-      method: "GET",
-      headers: this.#authHeaders(token)
+      method: "GET"
     });
-  }
-
-  normalizeLoginResult(payload, fallbackEmail = "") {
-    return {
-      token: payload.token || payload.jwt || payload.accessToken || "",
-      user: {
-        email:
-          payload.user?.email ||
-          payload.email ||
-          fallbackEmail,
-        role: (payload.user?.role || payload.role || AppConfig.roles.user).toLowerCase()
-      }
-    };
   }
 
   normalizeCurrentUser(payload) {
+    if (!payload) {
+      return null;
+    }
+
     return {
       email: payload.email || payload.user?.email || "",
       role: (payload.role || payload.user?.role || AppConfig.roles.user).toLowerCase(),
-      remainingCalls:
-        payload.remainingCalls ??
-        payload.user?.remainingCalls ??
-        null
-    };
-  }
-
-  normalizeUsage(payload) {
-    return {
-      remainingCalls: payload.remainingCalls ?? payload.callsRemaining ?? 0,
-      usageCount: payload.usageCount ?? payload.totalUsage ?? null
+      remainingCalls: payload.remainingCalls ?? payload.user?.remainingCalls ?? null
     };
   }
 
   normalizeAdminUsers(payload) {
-    const rows = Array.isArray(payload) ? payload : payload.users || [];
+    return Array.isArray(payload) ? payload : (payload.users ?? []);
+  }
 
-    return rows.map((row) => ({
-      email: row.email || "",
-      role: (row.role || AppConfig.roles.user).toLowerCase(),
-      remainingCalls: row.remainingCalls ?? row.callsRemaining ?? 0,
-      usageCount: row.usageCount ?? row.totalUsage ?? row.callsUsed ?? 0
-    }));
+  normalizeUsage(payload) {
+    return {
+      remainingCalls: payload.remainingCalls ?? payload.callsRemaining ?? "--"
+    };
   }
 
   #buildUrl(path) {
@@ -92,13 +75,6 @@ export class AuthApiService {
   #jsonHeaders() {
     return {
       "Content-Type": "application/json"
-    };
-  }
-
-  #authHeaders(token) {
-    return {
-      ...this.#jsonHeaders(),
-      Authorization: `Bearer ${token}`
     };
   }
 }

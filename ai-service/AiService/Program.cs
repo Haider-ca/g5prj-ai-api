@@ -15,6 +15,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.AddConsole();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -37,17 +39,55 @@ var jwtOptions = builder.Configuration
     .GetSection(JwtOptions.SectionName)
     .Get<JwtOptions>() ?? new JwtOptions();
 
+jwtOptions.Key = jwtOptions.Key?.Trim() ?? string.Empty;
+jwtOptions.Issuer = jwtOptions.Issuer?.Trim() ?? string.Empty;
+jwtOptions.Audience = jwtOptions.Audience?.Trim() ?? string.Empty;
+
 if (string.IsNullOrWhiteSpace(jwtOptions.Key))
 {
     throw new InvalidOperationException("JWT key is missing.");
 }
 
-var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key + "\n"));
+var startupLogger = LoggerFactory.Create(logging => logging.AddConsole())
+    .CreateLogger("Startup");
+startupLogger.LogInformation(
+    "JWT config loaded. Issuer: {Issuer}; Audience: {Audience}; KeyLength: {KeyLength}; KeyPrefix: {KeyPrefix}; KeySuffix: {KeySuffix}",
+    jwtOptions.Issuer,
+    jwtOptions.Audience,
+    jwtOptions.Key.Length,
+    MaskPrefix(jwtOptions.Key),
+    MaskSuffix(jwtOptions.Key));
+
+var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.RequireHttpsMetadata = true;
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                var logger = context.HttpContext.RequestServices
+                    .GetRequiredService<ILoggerFactory>()
+                    .CreateLogger("JwtAuth");
+                logger.LogError(
+                    context.Exception,
+                    "JWT authentication failed. Message: {Message}",
+                    context.Exception.Message);
+                return Task.CompletedTask;
+            },
+            OnMessageReceived = context =>
+            {
+                if (string.IsNullOrWhiteSpace(context.Token) &&
+                    context.Request.Cookies.TryGetValue("auth_token", out var cookieToken))
+                {
+                    context.Token = cookieToken;
+                }
+
+                return Task.CompletedTask;
+            }
+        };
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
@@ -75,7 +115,8 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins(corsOptions.AllowedOrigins.ToArray())
                   .AllowAnyHeader()
-                  .AllowAnyMethod();
+                  .AllowAnyMethod()
+                  .AllowCredentials();
         }
     });
 });
@@ -89,11 +130,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    app.UseHttpsRedirection();
+}
 
-app.UseHttpsRedirection();
 app.UseCors("FrontendPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+static string MaskPrefix(string value) => value.Length <= 6 ? value : value[..6];
+
+static string MaskSuffix(string value) => value.Length <= 6 ? value : value[^6..];
