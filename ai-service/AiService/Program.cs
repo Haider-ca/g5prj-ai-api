@@ -39,6 +39,10 @@ var jwtOptions = builder.Configuration
     .GetSection(JwtOptions.SectionName)
     .Get<JwtOptions>() ?? new JwtOptions();
 
+jwtOptions.Key = jwtOptions.Key?.Trim() ?? string.Empty;
+jwtOptions.Issuer = jwtOptions.Issuer?.Trim() ?? string.Empty;
+jwtOptions.Audience = jwtOptions.Audience?.Trim() ?? string.Empty;
+
 if (string.IsNullOrWhiteSpace(jwtOptions.Key))
 {
     throw new InvalidOperationException("JWT key is missing.");

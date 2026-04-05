@@ -60,6 +60,10 @@ if (string.IsNullOrWhiteSpace(jwtKey))
 {
     jwtKey = jwtKeyProvider.ReadText(jwtOptions.KeyFilePath).Trim();
 }
+else
+{
+    jwtKey = jwtKey.Trim();
+}
 
 if (string.IsNullOrWhiteSpace(jwtKey))
 {
