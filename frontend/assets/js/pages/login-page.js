@@ -74,6 +74,7 @@ loginForm.addEventListener("submit", async (event) => {
     }
 
     sessionController.saveSession({
+      token: payload?.token || "",
       user: currentUser
     });
     setMessage(formMessage, UiStrings.loginSuccess, "success");
